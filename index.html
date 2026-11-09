@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Polling-day rain | Does rain keep Britain at home?</title>
+<meta name="description" content="Rain while the polls were open at every UK general election since 1945, seat by seat: about 0.96 points lower turnout per centimetre, but with only 22 elections the effect is not certain.">
+<meta property="og:title" content="Does rain keep Britain at home?">
+<meta property="og:description" content="14,052 constituency contests at 22 UK general elections, 1945 to 2024, matched to hourly rain in polling hours: a small dip in turnout in wetter seats, no partisan effect, and less certainty than you might think.">
+<meta property="og:image" content="https://maps.tristanhotham.com/polling-rain/header.png">
+<meta property="og:url" content="https://maps.tristanhotham.com/polling-rain/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<style>
+:root{
+  --bg:#FBF8F1; --panel:#F3EEE3; --fg:#22201C; --muted:#6B655B; --rule:#E3DDD0; --card:#FFFDF8; --border:#CFC6B4;
+  --loc:#2B67A3; --non:#C2410C;
+  --display:"Fraunces",Georgia,serif; --body:"Source Serif 4",Georgia,serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#18171A; --panel:#222026; --fg:#ECE7DE; --muted:#AAA397; --rule:#34313A; --card:#1E1C21; --border:#4A4650; --loc:#8DB4E2; --non:#F08A4B; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#18171A; --panel:#222026; --fg:#ECE7DE; --muted:#AAA397; --rule:#34313A; --card:#1E1C21; --border:#4A4650; --loc:#8DB4E2; --non:#F08A4B; color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 18px/1.62 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-x:hidden}
+.wrap{max-width:720px;margin:0 auto;padding-block:28px 64px}
+a{color:inherit;text-decoration-color:var(--loc);text-underline-offset:3px}
+h2{font:800 32px/1.06 var(--display);margin:52px 0 10px;text-wrap:balance}
+h2 .n{font:500 13px/1 var(--mono);color:var(--loc);display:block;letter-spacing:.1em;margin-bottom:10px}
+p{margin:0 0 16px}
+.byline{font:400 13px/1.4 var(--mono);color:var(--muted);margin-top:12px}
+.src{font:400 12px/1.45 var(--mono);color:var(--muted);margin-top:8px}
+.figure{margin:22px 0}.figure img{width:100%;display:block;border:1px solid var(--rule);background:#FBF8F1}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:22px 0}
+.stat b{display:block;font:800 38px/1 var(--display);color:var(--loc)}
+.stat span{font:400 13px/1.35 var(--mono);color:var(--muted)}
+details{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:10px 0;margin:18px 0;font-size:16px}
+summary{font:500 13px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--muted)}
+ul.plain{padding-left:20px} ul.plain li{margin:4px 0}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin:30px 0 0}
+.cta a{font:500 13px/1 var(--mono);text-decoration:none;border:1px solid var(--fg);padding:11px 14px;border-radius:3px}
+.cta a.p{background:var(--loc);border-color:var(--loc);color:#fff}
+footer{border-top:4px double var(--fg);margin-top:56px;padding-top:16px;font:400 13px/1.55 var(--mono);color:var(--muted)}
+footer p{margin:0 0 10px}
+table.t{width:100%;border-collapse:collapse;font:400 13.5px/1.4 var(--mono);margin:12px 0 4px}
+table.t th{text-align:left;font-weight:500;border-bottom:2px solid var(--fg);padding:5px 6px 5px 0}
+table.t td{border-bottom:1px solid var(--rule);padding:5px 6px 5px 0;vertical-align:top}
+table.t .r{text-align:right}
+.tscroll{overflow-x:auto}
+.theme{font:500 12px/1 var(--mono);background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:3px;padding:4px 8px;cursor:pointer;min-height:28px}
+.topbar{height:42px;display:flex;align-items:center;gap:14px;margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:0 max(14px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--rule);background:var(--bg);white-space:nowrap;overflow:hidden}
+.tb-name{font:800 18px/1 var(--display);color:var(--fg);text-decoration:none}
+.tb-k{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tb-links{margin-left:auto;display:flex;gap:16px;align-items:center;font:500 12px/1 var(--mono)}
+.tb-links a{text-decoration:none}
+.mapband{width:100vw;margin-left:calc(50% - 50vw)}
+.pane{position:relative;height:calc(100vh - 43px);height:calc(100svh - 43px);min-height:480px;background:#EEF0F2;overflow:hidden}
+#map{position:absolute;inset:0}
+.card{position:absolute;z-index:5;background:rgba(255,253,248,.96);color:#22201C;border:1px solid #CFC6B4;border-radius:6px;box-shadow:0 3px 14px rgba(30,25,15,.16)}
+.title{left:14px;top:14px;max-width:min(360px,calc(100% - 28px));padding:12px 16px}
+.title h1{font:800 clamp(22px,2.3vw,30px)/1.04 var(--display);margin:4px 0 0}
+.title h1 em{font-style:normal;color:#2B67A3}
+.title .dek{font-size:14px;line-height:1.4;margin:7px 0 0}
+.title .byline{font-size:11px;color:#6B655B;margin-top:6px}
+.kick{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#6B655B}
+.fold{position:absolute;right:6px;top:4px;border:0;background:none;font:500 16px/1 var(--mono);color:#6B655B;cursor:pointer;min-width:30px;min-height:30px}
+.unfold{display:none;font:600 14px/1 var(--mono);border:0;background:none;color:#2B67A3;cursor:pointer;min-height:32px;padding:0}
+.title.folded .tb,.title.folded .fold{display:none}.title.folded .unfold{display:block}.title.folded{padding:4px 12px}
+.ctl{right:54px;top:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;background:none;border:0;box-shadow:none;max-width:calc(100% - 430px)}
+.srch{position:relative;width:min(320px,100%)}
+.srch input{width:100%;font:400 15px/1 var(--mono);background:#FFFDF8;color:#22201C;border:1px solid #CFC6B4;border-radius:4px;padding:9px 10px;min-height:40px}
+.sug{position:absolute;left:0;right:0;top:100%;margin:2px 0 0;padding:0;list-style:none;background:#FFFDF8;border:1px solid #CFC6B4;max-height:300px;overflow:auto;display:none;z-index:12;color:#22201C}
+.sug li{padding:8px 10px;cursor:pointer;border-bottom:1px solid #EEE7DA;font:400 14px/1.3 var(--mono)}
+.sug li span{color:#6B655B;font-size:12px}
+.sug li[aria-selected="true"],.sug li:hover{background:#F3EEE3}
+.chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.maplibregl-popup{z-index:7}
+.chip{font:500 12px/1 var(--mono);background:#FFFDF8;color:#22201C;border:1px solid #CFC6B4;border-radius:999px;padding:8px 11px;cursor:pointer;min-height:34px;white-space:nowrap}
+.chip[aria-pressed="true"]{background:#2B67A3;color:#fff;border-color:#2B67A3}
+.chip.lyr{background:#22201C;color:#FBF8F1;border-color:#22201C}
+.lp{right:54px;top:110px;z-index:9;padding:10px 12px 8px;font:400 13px/1.3 var(--mono);display:none;min-width:250px}
+.lp.open{display:block}
+.lp h4{margin:0 0 6px;font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#6B655B}
+.lp label{display:flex;gap:8px;align-items:center;padding:5px 0;cursor:pointer;min-height:30px}
+.lp input{accent-color:#2B67A3;width:16px;height:16px}
+.key{left:14px;bottom:28px;padding:9px 12px;font:400 12px/1.3 var(--mono);width:260px}
+.key b{display:block;font:600 13px/1.2 var(--body);margin-bottom:5px}
+.sw{display:grid;grid-template-columns:repeat(2,1fr);gap:2px 10px;font-size:11.5px}.sw span i{display:inline-block;width:11px;height:11px;border-radius:50%;border:1px solid #9A9385;vertical-align:-1px;margin-right:5px}
+.ends{display:flex;justify-content:space-between;font-size:10.5px;color:#6B655B;margin-top:2px}
+.bonus{margin-top:8px;padding-top:7px;border-top:1px solid #E3DDD0}
+.bonus .v{font:800 22px/1 var(--display);color:#2B67A3}
+.nodata{display:inline-block;width:10px;height:10px;border-radius:50%;background:#BDB7AD;border:1px solid #fff;vertical-align:-1px;margin-right:5px}
+.maplibregl-popup-content{background:#FFFDF8;color:#22201C;font:400 12.5px/1.4 var(--mono);border:1px solid #CFC6B4;border-radius:5px;padding:10px 12px;max-width:340px;max-height:56vh;overflow:auto}
+.maplibregl-popup-content b.t{display:block;font:700 18px/1.15 var(--display);margin-bottom:2px;padding-right:14px}
+.maplibregl-popup-content table{border-collapse:collapse;margin:6px 0;width:100%}
+.maplibregl-popup-content td{padding:2px 6px 2px 0;border-bottom:1px solid #EEE7DA;vertical-align:top}
+.maplibregl-popup-content td.r{text-align:right;white-space:nowrap}
+.maplibregl-popup-content .nt{color:#6B655B;font-size:11px}
+.maplibregl-popup-content .lc{color:#2B67A3;font-weight:500}
+.maplibregl-popup-content a{color:#2B67A3}
+.maplibregl-ctrl-attrib{font:400 11px/1.3 var(--mono)!important}
+.nojs{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:400 14px var(--mono);color:#6B655B;padding:20px;text-align:center}
+.bonus-tbl td:first-child{white-space:nowrap}
+@media (max-width:900px){.ctl{left:10px;right:54px;max-width:none;align-items:flex-start}.chips{justify-content:flex-start}.title{top:162px}.lp{left:10px;right:auto;top:162px}}
+@media (max-width:600px){
+  .tb-k,.tb-links a.x{display:none}.topbar{gap:10px}.tb-name{font-size:15px}.tb-links{gap:10px}
+  .pane{height:80svh;min-height:540px}
+  .title{left:8px;top:152px;max-width:calc(100% - 16px)}.unfold{display:block}.fold{display:none}
+  .ctl{left:8px;top:8px}.chip{padding:7px 8px;font-size:11.5px;flex:0 0 auto}
+  .chips{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none;justify-content:flex-start}.chips::-webkit-scrollbar{display:none}
+  .key{left:8px;bottom:34px;width:auto;right:60px;padding:7px 9px}.key .exp{display:none}
+  .lp{top:152px;left:8px;right:8px;min-width:0}
+}
+.slider{display:flex;align-items:center;gap:8px;width:min(420px,100%);background:#FFFDF8;border:1px solid #CFC6B4;border-radius:6px;padding:6px 10px}
+.slider input[type=range]{flex:1;accent-color:#2B67A3;min-width:0}
+.slider .yr{font:800 20px/1 var(--display);color:#22201C;min-width:84px;text-align:right}
+.slider button{font:600 13px/1 var(--mono);border:1px solid #CFC6B4;background:#F3EEE3;color:#22201C;border-radius:4px;min-width:34px;min-height:32px;cursor:pointer}
+.key .nat{margin-top:8px;padding-top:7px;border-top:1px solid #E3DDD0;font-size:11.5px;color:#4A453D}
+.key .nat b{display:inline;font:700 15px/1 var(--display);color:#2B67A3;margin:0}
+.bars{display:flex;align-items:flex-end;gap:2px;height:46px;margin:6px 0 2px}
+.bars i{flex:1;background:#9CC3E0;border-radius:1px 1px 0 0;cursor:pointer;min-height:1px}
+.bars i.on{background:#13335F}
+.bars-l{display:flex;justify-content:space-between;font-size:10px;color:#6B655B}
+.spark{display:block;margin:6px 0 2px}
+@media (max-width:600px){.slider{width:100%}.slider .yr{font-size:17px;min-width:70px}.key .bars,.key .bars-l,.key .bonus{display:none}.key .nat{font-size:10.5px}}
+</style></head>
+<body>
+<div class="topbar">
+  <a class="tb-name" href="#mapWrap">Polling-day rain</a>
+  <span class="tb-k">Data study · 2026</span>
+  <nav class="tb-links"><a href="#essay">About</a><button class="theme" id="theme" aria-label="Toggle dark mode">◐</button><a href="https://doi.org/10.5281/zenodo.24094534">Paper</a><a class="x" href="https://github.com/Tristan-Hotham/polling-rain">Data and code</a></nav>
+</div>
+<div class="mapband">
+  <div class="pane" id="mapWrap" data-fullscreen-map role="application" aria-label="Map of UK constituencies coloured by rain during polling hours at each general election from 1945 to 2024">
+    <div id="map"></div>
+    <div class="nojs" id="nojs">Loading the map. It needs JavaScript and WebGL.</div>
+    <div class="card title" id="title">
+      <button class="unfold" id="unfold">Does rain keep Britain at home? ▾</button>
+      <button class="fold" id="fold" aria-label="Fold the title">▴</button>
+      <div class="tb">
+        <div class="kick">Data study · 1945 to 2024</div>
+        <h1>Does <em>rain</em> keep Britain at home?</h1>
+        <p class="dek">Every UK constituency at every general election since 1945 (dots), coloured by how much rain fell while its polls were open. Drag the slider through the elections and tap a seat for its turnout and its rain hour by hour.</p>
+        <div class="byline">Dr Tristan Hotham · Independent researcher · 2026</div>
+      </div>
+    </div>
+    <div class="card ctl">
+      <div class="srch"><input type="search" id="q" placeholder="Find a constituency" aria-label="Find a constituency" autocomplete="off"><ul class="sug" id="sug" role="listbox"></ul></div>
+      <div class="slider"><button id="play" aria-label="Play through the elections">▶</button><input type="range" id="el" min="0" max="21" step="1" value="20" aria-label="General election"><span class="yr" id="yr">2019</span></div>
+      <div class="chips"><button class="chip lyr" id="lyrBtn" aria-expanded="false" aria-controls="lp">Layers</button></div>
+    </div>
+    <div class="card lp" id="lp" role="dialog" aria-label="Map layers">
+      <h4>Layers</h4>
+      <label><input type="checkbox" id="lyW" checked> Seats with rain in polling hours</label>
+      <label><input type="checkbox" id="lyD" checked> Dry seats (under 0.1 mm)</label>
+      <label><input type="checkbox" id="lyX" checked> Seats left out of the models (hollow)</label>
+      <label><input type="checkbox" id="lyL" checked> Seat names (zoom in)</label>
+      <label><input type="checkbox" id="lyB" checked> Base map place names</label>
+      <label><input type="checkbox" id="lyK" checked> Key and national chart</label>
+    </div>
+    <div class="card key" id="key"><b>Rain while the polls were open</b><div class="sw" id="sw"></div>
+      <div class="nat" id="nat"></div>
+      <div class="bars" id="bars" aria-hidden="true"></div><div class="bars-l"><span>1945</span><span>mean rain by election</span><span>2024</span></div>
+      <div class="bonus" id="bonusBox">Turnout per cm of rain: <span class="v">-0.96</span> points<br><span style="color:#6B655B">95% CI -1.82 to -0.11, but not certain (see below)</span></div></div>
+  </div>
+</div>
+<div class="wrap" id="essay">
+<p style="margin-top:6px">Every British election night someone blames the weather. Rain on polling day is supposed to keep the less committed at home, and some say it helps one party more than another. Studies in the United States, the Netherlands, Denmark and elsewhere have found small effects; others, in Sweden for example, found none. Britain has had little such work across many elections. So I matched each of the 14,052 constituency contests at the 22 general elections from 1945 to 2024 to the rain that fell on it, hour by hour, while its polls were open.</p>
+<div class="byline">Dr Tristan Hotham · Independent researcher · 2026 · Data: ERA5 reanalysis via Open-Meteo (CC BY 4.0) and Who won here? (UK Parliament, House of Commons Library) · Base map: OpenFreeMap Positron (OpenStreetMap)</div>
+<div class="stats">
+<div class="stat"><b>14,052</b><span>constituency contests at 22 UK general elections, 1945 to 2024</span></div>
+<div class="stat"><b>-0.96</b><span>points of turnout per centimetre of rain in polling hours (95% CI -1.82 to -0.11)</span></div>
+<div class="stat"><b>8.7 mm</b><span>average rain in polling hours in 2019, the wettest election; 88% of seats had 5 mm or more</span></div>
+<div class="stat"><b>p 0.14</b><span>with inference that allows for only 22 elections (wild bootstrap); reshuffled rain maps give p 0.10</span></div>
+</div>
+
+<h2><span class="n">01 · The answer</span>Maybe a little</h2>
+<p>The fairest comparison is a seat with itself: the same constituency at different elections, wetter or drier than usual, set against how turnout moved across the whole country at each election. On that comparison, each centimetre of rain in polling hours went with turnout 0.96 points lower (95% confidence interval -1.82 to -0.11, across 13,731 contests). That is about a tenth of a point per millimetre. A wet but ordinary polling day, 5 mm while the polls were open, would cost about half a point.</p>
+<div class="figure"><img src="img/bins.jpg" alt="Binned scatter of turnout against rain, both relative to what the seat and election would lead you to expect; the points slope gently downward" loading="lazy"><p class="src">Turnout and rain relative to each seat's usual and each election's average, in 20 equal groups.</p></div>
+<p>That is close to what a large Danish study found (0.95 points per centimetre) and larger per centimetre than the classic American estimate of just under one point per inch. But it is small. Most of the year to year change in turnout has nothing to do with the weather: turnout fell from 71.4% in 1997 to 59.3% in 2001, and 2001 was not unusually wet.</p>
+<div class="figure"><img src="img/time.jpg" alt="Bar chart of mean polling-hours rain by election, highest in 2019 and 2017, above a line chart of mean turnout falling sharply in 2001" loading="lazy"><p class="src">Rain in polling hours and turnout, election by election.</p></div>
+
+<h2><span class="n">02 · How sure</span>Twenty-two elections is not many</h2>
+<p>Rain does not fall seat by seat. A weather front soaks a whole region at once, and there have been only 22 general elections since 1945, so the real amount of independent information is much smaller than 13,731 contests suggest. Two checks take this seriously. A wild bootstrap that treats each election as one block gives p = 0.14. And swapping whole national rain maps between elections, so that every seat gets the rain it had on a different polling day, produces estimates as far from zero as the real one 9.9% of the time. By those standards the effect is not established: it is suggestive, no more.</p>
+<div class="figure"><img src="img/ri.jpg" alt="Histogram of estimates from reshuffled rain maps centred near zero, with the real estimate of about minus one marked in the left tail" loading="lazy"><p class="src">Estimates from 1,000 reshuffles of whole rain maps between elections, and the real one.</p></div>
+<p>A placebo adds a further doubt. Rain on the day before polling day, which cannot have kept anyone from the polls on the day, shows an association at least as large (-1.68 points per centimetre, CI -3.46 to 0.10). Rain the day after shows nothing (-0.12). Wet weather the day before may genuinely matter, through campaigning or mood, or some places may simply be both wetter and lower in turnout in some years for other reasons. Put through the same two checks, the day-before link looks at least as unusual as the polling-day one (p = 0.08 and 0.04). Either way, it is a warning against reading the main estimate as a clean effect of rain on voters.</p>
+<div class="figure"><img src="img/robust.jpg" alt="Coefficient chart: the estimate under about fifteen alternative choices, all negative between about minus 0.5 and minus 1.1, several with intervals crossing zero, and two grey placebo rows" loading="lazy"><p class="src">The estimate under other choices, with 95% intervals.</p></div>
+<p>The estimate is negative under every other choice I tried, between -1.12 and -0.55 with other fixed effects or first differences, and between -1.11 and -0.93 with other ways of measuring rain. It stays negative when any one election (-1.49 to -0.75) or any one region (-1.13 to -0.57) is left out. Several of those intervals include zero.</p>
+
+<h2><span class="n">03 · Who stays at home</span>No sign of partisan rain</h2>
+<p>The old idea that rain helps the Conservatives finds no support here. Polling-hours rain has no clear link with the Conservative share (-0.24 points per centimetre, CI -1.70 to 1.22) or the Labour share (-0.27, CI -4.11 to 3.57), in Great Britain.</p>
+<p>I expected postal votes on demand, available in Great Britain from 2001, to blunt the effect of rain. The opposite appears: the estimate is -0.49 for 1945 to 1997 and -1.10 for 2001 to 2024, though the earlier one is uncertain and the two wettest elections, 2017 and 2019, both fall in the later period. Crowded urban seats and less crowded ones, marginal and safe seats, look much the same.</p>
+<div class="figure"><img src="img/het.jpg" alt="Coefficient chart of the turnout estimate by period, nation, crowding and marginality, and of party vote shares, mostly overlapping zero" loading="lazy"><p class="src">By period, nation and type of seat, and for party vote shares.</p></div>
+<div class="figure"><img src="img/maps.jpg" alt="Twenty-two small maps of the UK, one per general election from 1945 to 2024, with constituency dots coloured by polling-hours rain: dark blue across England in 2019 and 1987, almost all dry in 1951, 1992 and 1997" loading="lazy"><p class="src">Rain in polling hours at every election. 2019 was by far the wettest; 1951, 1992 and 1997 were almost dry everywhere.</p></div>
+
+<h2><span class="n">04 · How I did this</span>Seats, grid cells and hours</h2>
+<p><b>Elections.</b> Every contested constituency at the 22 general elections from 1945 to 2024, with its turnout and a point for the seat, from my dataset Who won here?. I left out the university seats of 1945 (their electors voted by post from anywhere) and 22 seats whose 1945 poll was, or may have been, postponed for local wakes weeks.</p>
+<p><b>Rain.</b> Hourly rain from the ERA5 reanalysis, through the Open-Meteo archive, at the grid cell nearest each seat, summed over the hours the polls were open: 8am to 9pm in 1945 (assumed: candidates could ask for an extra hour at either end), 7am to 9pm from 1950 and 7am to 10pm from 1970, following the House of Commons Library's history of polling hours.</p>
+<p><b>The comparison.</b> Turnout regressed on rain with a fixed effect for each seat name and each election, with uncertainty clustered by seat and by election and region, then checked with a wild bootstrap by election and with whole rain maps reshuffled between elections. I wrote down the plan before running the models and report it as planned.</p>
+<p><b>What this cannot say.</b> ERA5 is coarse, about 30 km across, so many city seats share one value and rain is measured with error; that tends to shrink the estimate towards zero. Turnout is per seat, not per voter, so this cannot say who stayed at home. Seats are points, and boundaries changed. Postal votes cast before polling day are counted in turnout but were never rained on. And with only 22 elections, the honest answer is that rain may lower turnout a little, but the data cannot rule out that it makes no difference at all.</p>
+<details><summary>Sources and licences</summary>
+<ul class="plain">
+<li>Weather: ERA5 hourly reanalysis (Hersbach et al. 2020; Copernicus Climate Change Service), via the Open-Meteo Historical Weather API (Zippenfenig 2023), CC BY 4.0. Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>.</li>
+<li>Results: Hotham (2026) <a href="https://maps.tristanhotham.com/elections-since-1832/">Who won here?</a>, from UK Parliament and House of Commons Library results (Open Parliament Licence v3.0).</li>
+<li>Regions: ONS (Open Government Licence v3.0). Base map: OpenFreeMap Positron, OpenStreetMap contributors (ODbL). MapLibre GL JS 4.7.1.</li>
+<li>Polling hours: House of Commons Library, Polling stations and hours of polling (SN/PC/05517). 1945 postponements: Hansard, HC Deb 31 May and 11 June 1945.</li>
+<li>Text, figures and data CC BY 4.0; code MIT. Contains Parliamentary information licensed under the Open Parliament Licence v3.0.</li>
+</ul></details>
+<div class="cta"><a class="p" href="https://doi.org/10.5281/zenodo.24094534">Read the paper</a><a href="https://github.com/Tristan-Hotham/polling-rain">Data and code</a><a href="https://blog.tristanhotham.com/2026/10/31/polling-rain/">Blog post</a></div>
+<footer>
+<p>Dr Tristan Hotham, Independent researcher. ORCID <a href="https://orcid.org/0000-0003-4931-9349">0000-0003-4931-9349</a>.</p>
+<p>Cite as: Hotham, T. (2026) Does rain keep Britain at home? Polling-day weather and turnout at UK general elections, 1945 to 2024. Zenodo. <a href="https://doi.org/10.5281/zenodo.24094534">10.5281/zenodo.24094534</a></p>
+<p>Code: <a href="https://github.com/Tristan-Hotham/polling-rain">github.com/Tristan-Hotham/polling-rain</a> (MIT). Text, figures and data CC BY 4.0.</p>
+<p>I wrote the text, with drafting and editing assistance from Claude (Anthropic), which also helped prepare the analysis code. I reviewed and checked all text and results.</p>
+</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="js/page.js?v=20261109"></script>
+<!-- map-fullscreen v1 -->
+<style id="mfs-style">
+.mfs-btn{position:absolute;top:10px;right:10px;z-index:1001;width:34px;height:34px;border:2px solid rgba(0,0,0,.25);border-radius:4px;background:#fff;color:#222;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.mfs-btn:hover{background:#f2f2f2}
+.mfs-btn svg{width:18px;height:18px}
+.mfs-host.mfs-btn-left .mfs-btn{right:auto;left:54px}
+.mfs-fake{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;z-index:100000!important;border-radius:0!important}
+html.mfs-lock,html.mfs-lock body{overflow:hidden!important}
+:fullscreen.mfs-host{width:100vw!important;height:100vh!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:0!important}
+</style>
+<script id="mfs-script">
+(function(){
+  var ICON_OPEN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+  var ICON_CLOSE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
+  function poke(){setTimeout(function(){window.dispatchEvent(new Event('resize'));},60);setTimeout(function(){window.dispatchEvent(new Event('resize'));},400);}
+  function realFS(){return document.fullscreenElement||document.webkitFullscreenElement;}
+  function add(el){
+    if(el.__mfs)return; el.__mfs=1;
+    var cs=getComputedStyle(el); if(cs.position==='static')el.style.position='relative';
+    el.classList.add('mfs-host');
+    // avoid clashing with a top-right Leaflet control (e.g. "Map layers")
+    var tr=el.querySelector('.leaflet-top.leaflet-right');
+    if(tr&&tr.children.length){ el.classList.add('mfs-btn-left'); }
+    var b=document.createElement('button'); b.type='button'; b.className='mfs-btn';
+    b.title='Full screen map'; b.setAttribute('aria-label','Full screen map'); b.innerHTML=ICON_OPEN;
+    ['click','dblclick','mousedown','touchstart','wheel'].forEach(function(t){b.addEventListener(t,function(e){e.stopPropagation();},{passive:t!=='click'});});
+    function setIcon(on){b.innerHTML=on?ICON_CLOSE:ICON_OPEN;b.title=on?'Exit full screen':'Full screen map';b.setAttribute('aria-label',b.title);}
+    function exitFake(){el.classList.remove('mfs-fake');document.documentElement.classList.remove('mfs-lock');setIcon(false);poke();}
+    b.addEventListener('click',function(e){
+      e.preventDefault();
+      if(el.classList.contains('mfs-fake')){exitFake();return;}
+      if(realFS()){(document.exitFullscreen||document.webkitExitFullscreen).call(document);return;}
+      var req=el.requestFullscreen||el.webkitRequestFullscreen;
+      if(req){ try{ var p=req.call(el); if(p&&p.catch)p.catch(function(){el.classList.add('mfs-fake');document.documentElement.classList.add('mfs-lock');setIcon(true);poke();}); }catch(err){el.classList.add('mfs-fake');document.documentElement.classList.add('mfs-lock');setIcon(true);poke();} }
+      else { el.classList.add('mfs-fake');document.documentElement.classList.add('mfs-lock');setIcon(true);poke(); }
+    });
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&el.classList.contains('mfs-fake'))exitFake();});
+    ['fullscreenchange','webkitfullscreenchange'].forEach(function(t){document.addEventListener(t,function(){setIcon(realFS()===el);poke();});});
+    el.appendChild(b);
+  }
+  function scan(){
+    var els=document.querySelectorAll('[data-fullscreen-map], .leaflet-container, .maplibregl-map, .mapboxgl-map');
+    els.forEach(function(el){
+      if(el.closest('.mfs-host')&&!el.classList.contains('mfs-host'))return;
+      var r=el.getBoundingClientRect(); if(r.width<200||r.height<150)return;
+      add(el);
+    });
+  }
+  function start(){scan(); var n=0; var t=setInterval(function(){scan(); if(++n>20)clearInterval(t);},500);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
+<!-- /map-fullscreen -->
+
+<script src="https://maps.tristanhotham.com/assets/site-nav.js" defer></script>
+</body>
+</html>
